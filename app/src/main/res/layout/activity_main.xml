@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:scaleType="fitCenter"
+        android:layout_width="match_parent"
+        android:layout_height="403dp" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:text="戻る"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/prev"
+            android:layout_weight="1" />
+
+        <Button
+            android:text="再生/停止"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/slide"
+            android:layout_weight="1" />
+
+        <Button
+            android:text="進む"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/next"
+            android:layout_weight="1" />
+    </LinearLayout>
+
+</LinearLayout>
