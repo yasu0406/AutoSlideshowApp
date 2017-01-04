@@ -39,8 +39,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     public void run(){
                         if(cursor.moveToNext()){
                             imageSet();
-                        }else if(cursor.moveToNext() == false){
+                        } else {
                             cursor.moveToFirst();
+                            imageSet();
                         }
                     }
                 });
@@ -120,10 +121,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.prev:
                 if(mSlideshow == false) {
-                    cursor.moveToPrevious();
+                    if(cursor.moveToPrevious()){
                     imageSet();
-                    if(cursor.moveToPrevious() == false){
+                    }else{
                         cursor.moveToLast();
+                        imageSet();
                     }
                 } else {
                     Toast.makeText(MainActivity.this,"再生中",Toast.LENGTH_SHORT).show();
@@ -133,8 +135,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if(mSlideshow == false) {
                     if(cursor.moveToNext()){
                         imageSet();
-                    } else if(cursor.moveToNext() == false){
+                    } else {
                         cursor.moveToFirst();
+                        imageSet();
                     }
                 } else {
                     Toast.makeText(MainActivity.this,"再生中",Toast.LENGTH_SHORT).show();
