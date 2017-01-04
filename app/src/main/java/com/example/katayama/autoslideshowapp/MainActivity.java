@@ -69,8 +69,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
             getContentsInfo();
         }
-        getCusor();
-        cursor.moveToFirst();
         prev = (Button) findViewById(R.id.prev);
         prev.setOnClickListener(this);
         next = (Button) findViewById(R.id.next);
@@ -116,15 +114,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if (cursor.moveToFirst()) {
                 imageSet();
         }
-        cursor.close();
     }
 
     public void onClick(View v){
         switch (v.getId()) {
             case R.id.prev:
                 if(mSlideshow == false) {
-                    imageSet();
                     cursor.moveToPrevious();
+                    imageSet();
                     if(cursor.moveToPrevious() == false){
                         cursor.moveToLast();
                     }
