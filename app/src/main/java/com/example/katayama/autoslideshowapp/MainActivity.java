@@ -20,19 +20,15 @@ import android.widget.Toast;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static android.R.attr.id;
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     private static final int PERMISSIONS_REQUEST_CODE = 100;
     private Button prev;
     private Button next;
     private Button slide;
-    ImageView imageView;
-    //private int mPosition;
-    //int id[] = {23,24,25,26};
     boolean mSlideshow = false;
     Cursor cursor;
+
 
     public class MainTimerTask extends TimerTask {
         @Override
@@ -41,10 +37,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 mHandler.post(new Runnable(){
                     @Override
                     public void run(){
-                        Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                        Log.d("ANDROID", "URI : " + imageUri);
-                        imageView = (ImageView) findViewById(R.id.imageView);
-                        imageView.setImageURI(imageUri);
+                        if(cursor.moveToNext()){
+                            imageSet();
+                        }else if(cursor.moveToNext() == false){
+                            cursor.moveToFirst();
+                        }
                     }
                 });
             }
@@ -72,6 +69,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             } else {
             getContentsInfo();
         }
+        getCusor();
+        cursor.moveToFirst();
         prev = (Button) findViewById(R.id.prev);
         prev.setOnClickListener(this);
         next = (Button) findViewById(R.id.next);
@@ -79,7 +78,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         slide = (Button) findViewById(R.id.slide);
         slide.setOnClickListener(this);
         timer.schedule(mTimerTask, 0, 2000);
-
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -105,18 +103,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 null // ソート (null ソートなし)
         );
     }
-
+    public void imageSet(){
+        int fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
+        Long id = cursor.getLong(fieldIndex);
+        Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+        ImageView imageView = (ImageView) findViewById(R.id.imageView);
+        imageView.setImageURI(imageUri);
+        Log.d("Next", imageUri.toString());
+    }
     private void getContentsInfo() {
         getCusor();
         if (cursor.moveToFirst()) {
-            do {
-                int fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
-                Long id = cursor.getLong(fieldIndex);
-                Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                ImageView imageVIew = (ImageView) findViewById(R.id.imageView);
-                imageVIew.setImageURI(imageUri);
-                Log.d("android", imageUri.toString());
-            }while (cursor.moveToNext());
+                imageSet();
         }
         cursor.close();
     }
@@ -124,16 +122,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v){
         switch (v.getId()) {
             case R.id.prev:
-                prev();
                 if(mSlideshow == false) {
+                    imageSet();
+                    cursor.moveToPrevious();
+                    if(cursor.moveToPrevious() == false){
+                        cursor.moveToLast();
+                    }
                 } else {
                     Toast.makeText(MainActivity.this,"再生中",Toast.LENGTH_SHORT).show();
                 }
                break;
             case R.id.next:
-                next();
                 if(mSlideshow == false) {
-
+                    if(cursor.moveToNext()){
+                        imageSet();
+                    } else if(cursor.moveToNext() == false){
+                        cursor.moveToFirst();
+                    }
                 } else {
                     Toast.makeText(MainActivity.this,"再生中",Toast.LENGTH_SHORT).show();
                 }
@@ -144,41 +149,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-//    public void movePosition(int move) {
-//        mPosition = mPosition + move;
-//        if(mPosition >= id.length) {
-//            mPosition = 0;
-//        } else if(mPosition < 0){
-//            mPosition = id.length - 1;
-//        }
-//    }
-
     public void onSlide() {
         mSlideshow = !mSlideshow;
-    }
-    public void next(){
-        // 画像の情報を取得する
-        getCusor();
-        if(cursor.moveToFirst()) {
-            cursor.moveToNext();
-                int fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
-                Long id = cursor.getLong(fieldIndex);
-                Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                ImageView imageVIew = (ImageView) findViewById(R.id.imageView);
-                imageVIew.setImageURI(imageUri);
-                Log.d("Next", imageUri.toString());
-        }
-    }
-    public void prev(){
-        // 画像の情報を取得する
-        getCusor();
-        if(cursor.moveToFirst()) {
-            int fieldIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID);
-            Long id = cursor.getLong(fieldIndex);
-            Uri imageUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-            ImageView imageVIew = (ImageView) findViewById(R.id.imageView);
-            imageVIew.setImageURI(imageUri);
-        }
-        cursor.moveToPrevious();
     }
 }
