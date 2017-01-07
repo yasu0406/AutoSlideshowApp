@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.util.Timer;
 import java.util.TimerTask;
@@ -26,6 +25,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button prev;
     private Button next;
     private Button slide;
+    boolean flag = false;
     boolean mSlideshow = false;
     Cursor cursor;
 
@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         next = (Button) findViewById(R.id.next);
         next.setOnClickListener(this);
         slide = (Button) findViewById(R.id.slide);
+        slide.setText("再生");
         slide.setOnClickListener(this);
         timer.schedule(mTimerTask, 0, 2000);
     }
@@ -127,8 +128,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         cursor.moveToLast();
                         imageSet();
                     }
-                } else {
-                    Toast.makeText(MainActivity.this,"再生中",Toast.LENGTH_SHORT).show();
                 }
                break;
             case R.id.next:
@@ -139,11 +138,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         cursor.moveToFirst();
                         imageSet();
                     }
-                } else {
-                    Toast.makeText(MainActivity.this,"再生中",Toast.LENGTH_SHORT).show();
                 }
                 break;
             case R.id.slide:
+                if(flag){
+                    slide.setText("再生");
+                    prev.setEnabled(flag);
+                    next.setEnabled(flag);
+                    flag = false;
+                }else{
+                    slide.setText("停止");
+                    prev.setEnabled(flag);
+                    next.setEnabled(flag);
+                    flag = true;
+                }
                 onSlide();
                 break;
         }
